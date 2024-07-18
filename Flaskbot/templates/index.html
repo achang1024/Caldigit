@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <!-- Basic styles for the chat interface -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #chat-container {
+            width: 400px;
+            max-width: 100%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #chat-box {
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user {
+            background-color: #d1e7dd;
+            text-align: right;
+        }
+        .bot {
+            background-color: #f8d7da;
+            text-align: left;
+        }
+        #message-input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Chat container holds the chatbox and input field -->
+    <div id="chat-container">
+        <!-- Chatbox where messages will be displayed -->
+        <div id="chat-box"></div>
+        <!-- Input field for user to type messages -->
+        <input type="text" id="message-input" placeholder="Type a message..." />
+    </div>
+    <!-- JavaScript for handling chat functionality -->
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+
+        // Function to append a message to the chatbox
+        function appendMessage(sender, message) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Function to send a message to the server and handle the response
+        async function sendMessage(message) {
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                if (data.message) {
+                    appendMessage('bot', data.message);
+                } else {
+                    appendMessage('bot', 'Error: No response from chatbot.');
+                }
+            } catch (error) {
+                appendMessage('bot', 'Error: Failed to communicate with chatbot.');
+            }
+        }
+
+        // Event listener for the Enter key to send a message
+        messageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const userMessage = messageInput.value;
+                if (userMessage.trim()) {
+                    appendMessage('user', userMessage);
+                    sendMessage(userMessage);
+                    messageInput.value = '';
+                }
+            }
+        });
+
+        // Append a welcome message when the page loads
+        window.onload = function() {
+            appendMessage('bot', 'Welcome to the Caldigit Chatbot. How can I help you?');
+        }
+    </script>
+</body>
+</html>
