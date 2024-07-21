@@ -28,6 +28,7 @@
             height: 400px;
             overflow-y: scroll;
             padding: 10px;
+            display: none;
         }
         .message {
             margin: 10px 0;
@@ -47,12 +48,42 @@
             padding: 10px;
             border: none;
             border-top: 1px solid #ddd;
+            display: none;
+        }
+        #user-info-form {
+            padding: 20px;
+        }
+        #user-info-form input, #user-info-form textarea {
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #user-info-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #user-info-form button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <!-- Chat container holds the chatbox and input field -->
     <div id="chat-container">
+        <!-- Form to gather user information at the start -->
+        <div id="user-info-form">
+            <h2>Welcome to the Caldigit Chatbot</h2>
+            <input type="text" id="product-name" placeholder="Enter product name" required />
+            <textarea id="issue-description" placeholder="Briefly describe the issue" required></textarea>
+            <button onclick="startChat()">Start Chat</button>
+        </div>
         <!-- Chatbox where messages will be displayed -->
         <div id="chat-box"></div>
         <!-- Input field for user to type messages -->
@@ -62,6 +93,7 @@
     <script>
         const chatBox = document.getElementById('chat-box');
         const messageInput = document.getElementById('message-input');
+        const userInfoForm = document.getElementById('user-info-form');
 
         // Function to append a message to the chatbox
         function appendMessage(sender, message) {
@@ -93,6 +125,22 @@
             }
         }
 
+        // Function to start the chat after getting user information
+        function startChat() {
+            const productName = document.getElementById('product-name').value;
+            const issueDescription = document.getElementById('issue-description').value;
+
+            if (productName.trim() && issueDescription.trim()) {
+                appendMessage('bot', `Thank you! You are asking about the ${productName}. You mentioned: "${issueDescription}"`);
+                userInfoForm.style.display = 'none';
+                chatBox.style.display = 'block';
+                messageInput.style.display = 'block';
+                appendMessage('bot', 'How can I help you further?');
+            } else {
+                alert('Please fill out both fields.');
+            }
+        }
+
         // Event listener for the Enter key to send a message
         messageInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
@@ -107,7 +155,7 @@
 
         // Append a welcome message when the page loads
         window.onload = function() {
-            appendMessage('bot', 'Welcome to the Caldigit Chatbot. How can I help you?');
+            appendMessage('bot', 'Welcome to the Caldigit Chatbot. Please provide the following information to get started.');
         }
     </script>
 </body>
