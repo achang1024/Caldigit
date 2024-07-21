@@ -13,7 +13,9 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 # Set your OpenAI API key from environment variables
-openai.api_key = os.getenv('MY_SECRET_KEY')
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
+app.logger.info(f"OpenAI API Key: {openai.api_key}")
 
 @app.route('/')
 def home():
