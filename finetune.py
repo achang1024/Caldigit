@@ -2,15 +2,16 @@ import openai
 import os
 import json
 from dotenv import load_dotenv
+import time
 
 # Load environment variables from a .env file
 load_dotenv()
 
 # Set your OpenAI API key
-openai.api_key = os.getenv('MY_SECRET_KEY')
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # Upload the training file
-training_file_path = 'training_data.jsonl'
+training_file_path = 'training_data_prepared.jsonl'
 
 # Ensure the file exists
 if not os.path.exists(training_file_path):
@@ -22,11 +23,10 @@ with open(training_file_path, 'rb') as f:
 
 print(f"Uploaded training file ID: {training_file['id']}")
 
-# Fine-tune the model
+# Fine-tune the model using the updated endpoint
 fine_tune_response = openai.FineTune.create(
     training_file=training_file['id'],
-    model="davinci",  # Base model for fine-tuning, adjust if necessary
-    n_epochs=4  # Number of epochs, adjust based on your dataset size
+    model="davinci"  # Base model for fine-tuning, adjust if necessary
 )
 
 print(f"Fine-tune job response: {fine_tune_response}")

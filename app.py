@@ -57,32 +57,32 @@ def chat():
         app.logger.error(f"Error: {e}")
         return jsonify({'error': 'Internal server error'}), 500
 
-# Route to test if the API key is working
-@app.route('/test-api')
-def test_api():
-    try:
-        # Generate a response from the OpenAI API using a test message
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Use the appropriate model name
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Hello, how are you?"}
-            ]
-        )
-        # Return the chatbot's message from the test response
-        chatbot_message = response['choices'][0]['message']['content'].strip()
-        app.logger.info("API key test successful")
-        return jsonify({'message': chatbot_message})
+# # Route to test if the API key is working
+# @app.route('/test-api')
+# def test_api():
+#     try:
+#         # Generate a response from the OpenAI API using a test message
+#         response = openai.ChatCompletion.create(
+#             model="ft:davinci-002:caldigit-test-chatbot:cal-bot:9oyV5jTW",  # Use the appropriate model name
+#             messages=[
+#                 {"role": "system", "content": "You are a helpful assistant."},
+#                 {"role": "user", "content": "Hello, how are you?"}
+#             ]
+#         )
+#         # Return the chatbot's message from the test response
+#         chatbot_message = response['choices'][0]['message']['content'].strip()
+#         app.logger.info("API key test successful")
+#         return jsonify({'message': chatbot_message})
     
-    except openai.error.OpenAIError as oe:
-        # Log and return OpenAI API errors
-        app.logger.error(f"OpenAI API error: {oe}")
-        return jsonify({'error': 'OpenAI API error'}), 500
+#     except openai.error.OpenAIError as oe:
+#         # Log and return OpenAI API errors
+#         app.logger.error(f"OpenAI API error: {oe}")
+#         return jsonify({'error': 'OpenAI API error'}), 500
     
-    except Exception as e:
-        # Log and return any other errors
-        app.logger.error(f"Error: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+#     except Exception as e:
+#         # Log and return any other errors
+#         app.logger.error(f"Error: {e}")
+#         return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     # Run the Flask application in debug mode
