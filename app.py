@@ -52,15 +52,28 @@ def chat():
     
     # Generate a response from the OpenAI API using the fine-tuned model if no keyword matches
     try:
-        response = openai.Completion.create(
-            model="ft:davinci-002:caldigit-test-chatbot:cal-bot:9oyV5jTW",  # Use the appropriate model name
-            prompt=f"User: {user_message}\nChatbot:",
-            max_tokens=100,
-            temperature=0.1,  # Adjust the temperature for more conversational responses
-            stop=["User:", "Chatbot:"]  # Ensure the response stops at the appropriate place
+        # response = openai.Completion.create(
+
+        #     #combined/detailed model: ft:davinci-002:caldigit-test-chatbot:combined:9rCYt2Bt
+        #     #separate/simple model: ft:davinci-002:caldigit-test-chatbot:separate:9rCcKLmw
+        #     #3.5 simple model: ft:gpt-3.5-turbo-0125:caldigit-test-chatbot:separate-35:9t4Lnh87
+        #     #4 ft:gpt-4o-mini-2024-07-18:caldigit-test-chatbot:cal-simplified:9uXe7IhQ
+        #     model="ft:gpt-4o-mini-2024-07-18:caldigit-test-chatbot:cal-simplified:9uXe7IhQ", 
+        #     prompt=f"User: {user_message}\nChatbot:",
+        #     max_tokens=200,
+        #     temperature=1,  # Adjust the temperature for more conversational responses
+        #     stop=["User:", "Chatbot:"]  # Ensure the response stops at the appropriate place
+        # )
+        response = openai.ChatCompletion.create(
+            model="ft:gpt-4o-mini-2024-07-18:caldigit-test-chatbot:cal-simplified:9uXe7IhQ",  # Use the appropriate model name
+            messages=[
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=200,
+            temperature=1  # Adjust the temperature for more conversational responses
         )
         # Extract the chatbot's message from the response
-        chatbot_message = response['choices'][0]['text'].strip()
+        chatbot_message = response['choices'][0]['message']['content'].strip()
         app.logger.info(f"User message: {user_message}")
         app.logger.info(f"Chatbot response: {chatbot_message}")
         return jsonify({'message': chatbot_message})
@@ -80,13 +93,15 @@ def chat():
 def test_api():
     try:
         # Generate a response from the OpenAI API using a test message
-        response = openai.Completion.create(
-            model="ft:gpt-3.5-turbo-1106:caldigit-test-chatbot:cal-bot:9q6vR10M",  # Use the appropriate model name
-            prompt="User: Hello, how are you?\nChatbot:",
+        response = openai.ChatCompletion.create(
+            model="ft:gpt-3.5-turbo-0125:caldigit-test-chatbot:separate-35:9t4Lnh87",  # Use the appropriate model name
+            messages=[
+                {"role": "user", "content": "Hello, how are you?"}
+            ],
             max_tokens=150
         )
         # Return the chatbot's message from the test response
-        chatbot_message = response['choices'][0]['text'].strip()
+        chatbot_message = response['choices'][0]['message']['content'].strip()
         app.logger.info("API key test successful")
         return jsonify({'message': chatbot_message})
     

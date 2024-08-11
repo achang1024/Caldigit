@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
-    <!-- Basic styles for the chat interface -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+
     <style>
+        body,
+        .message,
+        #message-input {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,96 +31,431 @@
             height: 100vh;
             background-color: #f0f0f0;
         }
+
+        img {
+            padding: 5px;
+        }
+
         #chat-container {
             width: 400px;
+            /* Increased width */
+            height: 450px;
+            /* Increased height */
             max-width: 100%;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Add a subtle shadow for depth */
+            border-radius: 15px;
+            /* Rounded corners */
             overflow: hidden;
+            border: 5px solid #f9c74f;
+            /* Light yellow border */
+            display: flex;
+            flex-direction: column;
         }
+
         #chat-box {
-            height: 400px;
-            overflow-y: scroll;
-            padding: 10px;
-            display: none;
+            flex-grow: 1;
+            /* Makes the chat box take up all available space */
+            overflow-y: auto;
+            padding: 15px;
+            /* Adjust padding for better spacing */
+            scroll-behavior: smooth;
         }
+
         .message {
-            margin: 10px 0;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            word-wrap: break-word;
+            margin: 5px 0;
         }
+
         .user {
-            background-color: #d1e7dd;
-            text-align: right;
+            background-color: #a9a9a9;
+            /* Darker gray background for user */
+            justify-content: flex-end;
+            color: white;
+            align-self: flex-end;
+            border-radius: 20px 20px 0px 20px;
+            width: fit-content;
+            max-width: 70%;
+            margin-left: auto;
+            padding: 10px 70px 10px 15px;
+            /* Increase right padding to make room for the timestamp */
+            position: relative;
+            /* Position relative for correct timestamp alignment */
         }
+
+        .user .timestamp {
+            color: white;
+            /* Change timestamp color to white */
+            font-size: 0.8em;
+            position: absolute;
+            /* Position absolute to move it to the right */
+            right: 15px;
+            /* Distance from the right edge of the bubble */
+            bottom: 10px;
+            /* Distance from the bottom of the bubble */
+            white-space: nowrap;
+            /* Prevent the timestamp from wrapping to the next line */
+            line-height: 1;
+            /* Ensure the timestamp is vertically centered */
+        }
+
         .bot {
-            background-color: #f8d7da;
-            text-align: left;
+            background-color: #f9e79f;
+            /* Yellow background for bot */
+            justify-content: flex-start;
+            align-self: flex-start;
+            border-radius: 20px 20px 20px 0px;
+            width: fit-content;
+            max-width: 70%;
+            margin-right: auto;
+            padding: 10px 60px 10px 15px;
+            /* Increase right padding to make room for the timestamp */
+            position: relative;
         }
+
+        .bot .timestamp {
+            color: #888;
+            /* Ensure the timestamp is a readable color */
+            font-size: 0.8em;
+            position: absolute;
+            right: 15px;
+            bottom: 10px;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .message img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .bot img {
+            margin-left: 10px;
+            margin-right: 0;
+        }
+
+        .bot .logo {
+            padding: 5px;
+        }
+
         #message-input {
-            width: calc(100% - 20px);
-            padding: 10px;
+            width: calc(100% - 30px);
+            /* Adjusted for larger container */
+            padding: 15px;
+            /* Increased padding for better feel */
             border: none;
             border-top: 1px solid #ddd;
-            display: none;
+            box-sizing: border-box;
         }
+
         #user-info-form {
             padding: 20px;
         }
-        #user-info-form input, #user-info-form textarea {
+
+        #user-info-form select {
             width: calc(100% - 22px);
             margin: 10px 0;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
         #user-info-form button {
             width: 100%;
-            padding: 10px;
-            background-color: #007bff;
+            padding: 12px;
+            /* background: linear-gradient(90deg, #007bff, #0056b3); */
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            /* Added transition for smooth effect */
+            font-size: 16px;
         }
+
         #user-info-form button:hover {
-            background-color: #0056b3;
+            /* background: linear-gradient(90deg, #0056b3, #007bff); */
+            /* Change gradient direction or colors on hover */
+            transform: scale(1.05);
+            /* Slightly enlarge the button on hover */
+        }
+
+        #chat-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        #message-input {
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+            /* Initially hide the input field */
+
+        }
+
+        .message-container {
+            margin-bottom: 15px;
+            /* Space between messages */
+        }
+
+        .message-label {
+            font-size: 0.75em;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .user-label {
+            text-align: right;
+            margin-right: 15px;
+            /* Adjust right margin for the "You" label */
+        }
+
+        .bot-label {
+            text-align: left;
+            margin-left: 15px;
+            /* Adjust left margin for the "ChatBot" label */
+        }
+
+        /* Other existing styles */
+
+        #chat-box.active+#message-input {
+            display: block;
+            /* Show the input field when the chat is active */
+        }
+
+        .timestamp {
+            font-size: 0.8em;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        #chat-header {
+            background-color: #f9c74f;
+            /* Yellow background */
+            color: #333;
+            /* Darker text color for contrast */
+            text-align: center;
+            padding: 10px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #chat-header h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0 0 10px 0;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: fit-content;
+            max-width: 70%;
+            background-color: #f9e79f;
+            /* Same background as the bot messages */
+            padding: 10px;
+            border-radius: 20px 20px 20px 0px;
+            margin-right: auto;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #333;
+            border-radius: 50%;
+            opacity: 0;
+            animation: typing 1.5s infinite;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .bot .user {
+            width: fit-content;
+            /* Adjust width based on content */
+            max-width: 70%;
+            /* Limit the width to 70% of the chat box */
+            word-wrap: break-word;
+            /* Ensure text wraps within the bubble */
+            padding: 10px 60px 10px 15px;
+            /* Adjust padding to ensure space for the timestamp */
+            border-radius: 20px;
+            /* Rounded corners */
+            position: relative;
+            /* Allows for positioning of timestamp */
+
         }
     </style>
 </head>
+
 <body>
     <!-- Chat container holds the chatbox and input field -->
     <div id="chat-container">
+        <div id="chat-header">
+            <h3>AI-powered Caldigit Support Bot</h3>
+        </div>
         <!-- Form to gather user information at the start -->
         <div id="user-info-form">
-            <h2>Welcome to the Caldigit Chatbot</h2>
-            <input type="text" id="product-name" placeholder="Enter product name" required />
-            <textarea id="issue-description" placeholder="Briefly describe the issue" required></textarea>
-            <button onclick="startChat()">Start Chat</button>
+            <h2 class="text-center">Please select the product and they issue you are facing</h2>
+            <select id="product-name" class="form-control" required>
+                <option value="TS4">TS4</option>
+                <option value="TS3 Plus">TS3 Plus</option>
+                <option value="SOHO Dock">SOHO Dock</option>
+                <option value="Other">Other</option>
+            </select>
+            <select id="issue-description" class="form-control" required>
+                <option value="Displays">Displays</option>
+                <option class="non-selectable" disabled>--Advanced Options--</option>
+                <option value="Flickering Displays">Flickering Displays</option>
+                <option value="Displays are not recognized">Displays are not recognized</option>
+                <option value="Displays don’t wake from sleep">Displays don’t wake from sleep</option>
+                <option value="Displays are not at correct refresh rate/resolutions">Displays are not at correct refresh
+                    rate/resolutions</option>
+            </select>
+            <button onclick="startChat()" class="btn btn-primary mt-3">Start Chat</button>
         </div>
         <!-- Chatbox where messages will be displayed -->
         <div id="chat-box"></div>
         <!-- Input field for user to type messages -->
-        <input type="text" id="message-input" placeholder="Type a message..." />
+        <input type="text" id="message-input" class="form-control" placeholder="Type a message..." />
     </div>
     <!-- JavaScript for handling chat functionality -->
     <script>
         const chatBox = document.getElementById('chat-box');
         const messageInput = document.getElementById('message-input');
         const userInfoForm = document.getElementById('user-info-form');
-
-        // Function to append a message to the chatbox
+        const botLogoURL = 'https://yt3.googleusercontent.com/ytc/AIdro_mXvQmijZjRhzFHr86pC9xYXJ-GW4bHhqYRBdaEywfTqL0=s900-c-k-c0x00ffffff-no-rj'; // Reference to the local logo file
         function appendMessage(sender, message) {
+            //innerHTML instead of textContent
+            // Create a container for the label and the message
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container');
+
+            // Create the label
+            const label = document.createElement('div');
+            label.classList.add('message-label');
+            label.textContent = sender === 'user' ? 'You' : 'ChatBot';
+
+            // Apply the appropriate label class based on the sender
+            if (sender === 'user') {
+                label.classList.add('user-label');
+            } else {
+                label.classList.add('bot-label');
+            }
+
+            // Append the label to the container
+            messageContainer.appendChild(label);
+
+            // Create the message element
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender);
-            messageElement.textContent = message;
-            chatBox.appendChild(messageElement);
+
+            if (sender === 'bot') {
+                const logoElement = document.createElement('img');
+                logoElement.src = botLogoURL;
+                messageElement.appendChild(logoElement);
+            }
+
+            const textElement = document.createElement('span');
+            textElement.innerHTML = message; // Use innerHTML to render HTML content
+            messageElement.appendChild(textElement);
+
+            // Add timestamp
+            const timestamp = document.createElement('div');
+            timestamp.classList.add('timestamp');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            timestamp.textContent = time;
+            messageElement.appendChild(timestamp);
+
+            // Append the message element to the container
+            messageContainer.appendChild(messageElement);
+
+            // Append the entire container to the chat box
+            chatBox.appendChild(messageContainer);
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Add dialogue bubble animation
+            messageElement.style.opacity = 0;
+            setTimeout(() => {
+                messageElement.style.opacity = 1;
+                messageElement.style.transition = 'opacity 0.5s';
+            }, 100);
         }
 
-        // Function to send a message to the server and handle the response
+
+        // Example of usage
+
+        let botMessageCount = 0; // Counter to track the number of bot messages
+
         async function sendMessage(message) {
+            // Append user's message immediately
+            appendMessage('user', message);
+
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('typing-indicator');
+            typingIndicator.innerHTML = `
+        <span></span><span></span><span></span>
+    `;
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Simulate bot thinking time
+            await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
+
+            // Remove typing indicator after delay
+            chatBox.removeChild(typingIndicator);
+
+            // Fetch and display the bot's response
             try {
                 const response = await fetch('/chat', {
                     method: 'POST',
@@ -117,13 +467,22 @@
                 const data = await response.json();
                 if (data.message) {
                     appendMessage('bot', data.message);
+                    botMessageCount++; // Increment the counter for each bot message
                 } else {
                     appendMessage('bot', 'Error: No response from chatbot.');
                 }
+
+                // Check if the bot has sent 5 messages
+                if (botMessageCount === 3) {
+                    appendMessage('bot', 'Check out our <a href="https://www.caldigit.com/knowledge-base/" target="_blank">Knowledge Base</a> to look for more information.');
+                    appendMessage('bot', 'Or reach out to our support team at support@caldigit.com with your question.');
+                }
+
             } catch (error) {
                 appendMessage('bot', 'Error: Failed to communicate with chatbot.');
             }
         }
+
 
         // Function to start the chat after getting user information
         function startChat() {
@@ -134,19 +493,26 @@
                 appendMessage('bot', `Thank you! You are asking about the ${productName}. You mentioned: "${issueDescription}"`);
                 userInfoForm.style.display = 'none';
                 chatBox.style.display = 'block';
-                messageInput.style.display = 'block';
+                chatBox.classList.add('active'); // Add this line to mark the chat as active
+                messageInput.style.display = 'block'; // Show the input field
                 appendMessage('bot', 'How can I help you further?');
             } else {
                 alert('Please fill out both fields.');
             }
         }
 
+
         // Event listener for the Enter key to send a message
-        messageInput.addEventListener('keypress', function (e) {
+        messageInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
-                const userMessage = messageInput.value;
-                if (userMessage.trim()) {
-                    appendMessage('user', userMessage);
+                e.preventDefault(); // Prevent the default action to avoid double sending
+
+                // Prevent multiple submissions
+                if (e.repeat) return;
+
+                const userMessage = messageInput.value.trim();
+                if (userMessage) {
+                    // appendMessage('user', userMessage);
                     sendMessage(userMessage);
                     messageInput.value = '';
                 }
@@ -154,9 +520,10 @@
         });
 
         // Append a welcome message when the page loads
-        window.onload = function() {
-            appendMessage('bot', 'Welcome to the Caldigit Chatbot. Please provide the following information to get started.');
-        }
+        // window.onload = function() {
+        //     appendMessage('bot', 'Welcome to the Caldigit Chatbot. Please provide the following information to get started.');
+        // }
     </script>
 </body>
+
 </html>
